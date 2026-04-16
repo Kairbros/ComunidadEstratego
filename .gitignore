@@ -12,6 +12,14 @@ dist
 dist-ssr
 *.local
 
+# Variables de entorno — nunca subir a git
+.env
+.env.local
+.env.production
+backend/.env
+backend/estratego.db
+backend/uploads/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
