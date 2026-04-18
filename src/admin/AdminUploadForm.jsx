@@ -16,7 +16,7 @@ export default function AdminUploadForm({ resource, onSuccess, onCancel }) {
   const [title,       setTitle]       = useState(resource?.title       || '');
   const [description, setDescription] = useState(resource?.description || '');
   const [category,    setCategory]    = useState(resource?.category    || 'guides');
-  const [badge,       setBadge]       = useState(resource?.badge       || '');
+  const [badge,       setBadge]       = useState(resource?.palabra_clave || resource?.badge || '');
   const [icon,        setIcon]        = useState(resource?.icon        || 'FileText');
   const [pdfFile,     setPdfFile]     = useState(null);
   const [error,       setError]       = useState('');

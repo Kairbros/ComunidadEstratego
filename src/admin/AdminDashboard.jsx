@@ -226,7 +226,7 @@ export default function AdminDashboard({ onLogout }) {
                           {/* Badge keyword */}
                           <td className="px-4 py-3">
                             <span className="bg-[#d4af37] text-[#0a0a0a] text-[10px] font-mono font-bold px-2 py-0.5 rounded uppercase">
-                              {resource.badge}
+                              {resource.palabra_clave}
                             </span>
                           </td>
 

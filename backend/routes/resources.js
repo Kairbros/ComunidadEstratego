@@ -31,7 +31,19 @@ const upload = multer({
 
 // ─── GET /api/resources — público ────────────────────────────────────────────
 router.get('/', (req, res) => {
-  const resources = db.prepare('SELECT * FROM resources ORDER BY created_at DESC').all();
+  const resources = db.prepare(`
+    SELECT
+      id,
+      title,
+      description,
+      category,
+      badge AS palabra_clave,
+      icon,
+      filename,
+      download_url
+    FROM resources
+    ORDER BY created_at DESC
+  `).all();
   res.json(resources);
 });
 

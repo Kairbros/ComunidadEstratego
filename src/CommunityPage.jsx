@@ -100,7 +100,7 @@ function ResourceCard({ resource }) {
           <div className="icon-container w-10 h-10 rounded-lg bg-[#0a0a0a] flex items-center justify-center border border-[#1a1a1a]">
             <Icon className="w-4 h-4 text-[#d4af37]" />
           </div>
-          <Badge text={resource.badge} />
+          <Badge text={resource.palabra_clave} />
         </div>
 
         <div className="flex-1 min-h-0">
