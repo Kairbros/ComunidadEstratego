@@ -13,8 +13,20 @@ const storage = multer.diskStorage({
     cb(null, dir);
   },
   filename: (req, file, cb) => {
-    const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    cb(null, unique + path.extname(file.originalname));
+    const ext = path.extname(file.originalname);
+    const base = path.basename(file.originalname, ext)
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // quitar acentos
+      .replace(/\s+/g, '_')
+      .replace(/[^a-zA-Z0-9_\-.]/g, '');
+    const uploadDir = path.join(__dirname, '../uploads');
+    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+    let finalName = base + ext;
+    let counter = 1;
+    while (fs.existsSync(path.join(uploadDir, finalName))) {
+      finalName = `${base}_${counter}${ext}`;
+      counter++;
+    }
+    cb(null, finalName);
   },
 });
 
