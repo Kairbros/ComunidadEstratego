@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Search, FileText, Download, Sparkles, BookOpen, Video, Wrench } from 'lucide-react';
 import { API_URL } from './api';
 import { getIcon } from './icons';
+import SiteNav from './components/SiteNav';
 
 // ─── CONFIG ESTÁTICO ──────────────────────────────────────────────────────────
 const profile = {
@@ -180,41 +181,7 @@ export default function CommunityPage() {
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       <Particles />
 
-      {/* Navbar */}
-      <nav className="sticky top-0 z-50 bg-[#0a0a0a]/95 backdrop-blur-sm border-b border-[#1a1a1a]">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src="/VersiónPrincipalDorada.svg" alt="Estratego" className="w-10 h-10" />
-            <span className="text-white font-semibold text-sm font-mono hidden sm:block">
-              Comunidad Estrategas
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button className="px-4 py-2 bg-[#d4af37] text-[#0a0a0a] rounded-lg text-xs font-mono font-semibold">
-              Documentos
-            </button>
-            <button
-              disabled
-              className="px-4 py-2 bg-[#111111] text-gray-500 rounded-lg text-xs font-mono border border-[#1a1a1a] cursor-not-allowed relative group"
-            >
-              Tutoriales
-              <span className="absolute -top-2 -right-2 bg-[#d4af37]/20 text-[#d4af37] text-[8px] px-1.5 py-0.5 rounded font-bold">
-                SOON
-              </span>
-            </button>
-            <button
-              disabled
-              className="px-4 py-2 bg-[#111111] text-gray-500 rounded-lg text-xs font-mono border border-[#1a1a1a] cursor-not-allowed relative group"
-            >
-              Negocios
-              <span className="absolute -top-2 -right-2 bg-[#d4af37]/20 text-[#d4af37] text-[8px] px-1.5 py-0.5 rounded font-bold">
-                SOON
-              </span>
-            </button>
-          </div>
-        </div>
-      </nav>
+      <SiteNav active="documentos" />
 
       {/* Contenido principal */}
       <div className="relative z-10 max-w-4xl mx-auto px-4 py-6">

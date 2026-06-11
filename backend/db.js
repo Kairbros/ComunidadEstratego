@@ -33,14 +33,59 @@ db.exec(`
     password_hash TEXT NOT NULL,
     created_at    DATETIME DEFAULT CURRENT_TIMESTAMP
   );
+
+  -- ─── PUBLICACIONES ──────────────────────────────────────────────────────────
+  CREATE TABLE IF NOT EXISTS posts (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    title       TEXT     DEFAULT '',
+    description TEXT     DEFAULT '',
+    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at  DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  -- Galería: hasta 4 medios (imagen o video) por publicación
+  CREATE TABLE IF NOT EXISTS post_media (
+    id        INTEGER PRIMARY KEY AUTOINCREMENT,
+    post_id   INTEGER NOT NULL,
+    type      TEXT    NOT NULL,            -- 'image' | 'video'
+    filename  TEXT    NOT NULL,
+    url       TEXT    NOT NULL,
+    position  INTEGER NOT NULL DEFAULT 0,  -- orden en la galería
+    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
+  );
+
+  -- Adjuntos: cualquier archivo descargable (zip, pdf, etc.)
+  CREATE TABLE IF NOT EXISTS post_attachments (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    post_id       INTEGER NOT NULL,
+    filename      TEXT    NOT NULL,        -- nombre guardado en disco
+    original_name TEXT    NOT NULL,        -- nombre original (para mostrar)
+    url           TEXT    NOT NULL,
+    size          INTEGER NOT NULL DEFAULT 0,
+    mimetype      TEXT    NOT NULL DEFAULT '',
+    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_post_media_post       ON post_media(post_id);
+  CREATE INDEX IF NOT EXISTS idx_post_attachments_post ON post_attachments(post_id);
 `);
 
 // ─── SEED ADMIN ───────────────────────────────────────────────────────────────
-const adminExists = db.prepare('SELECT id FROM admins WHERE username = ?').get('EstrategoAdmin');
+// Credenciales tomadas del entorno. Solo se usan la primera vez (al sembrar).
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'EstrategoAdmin';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+
+const adminExists = db.prepare('SELECT id FROM admins WHERE username = ?').get(ADMIN_USERNAME);
 if (!adminExists) {
-  const hash = bcrypt.hashSync('Estrategia2025$', 12);
-  db.prepare('INSERT INTO admins (username, password_hash) VALUES (?, ?)').run('EstrategoAdmin', hash);
-  console.log('👤 Admin creado: EstrategoAdmin');
+  if (!ADMIN_PASSWORD) {
+    throw new Error(
+      'No hay admin en la base de datos y falta ADMIN_PASSWORD en el entorno. ' +
+      'Define ADMIN_USERNAME y ADMIN_PASSWORD para crear el admin inicial.'
+    );
+  }
+  const hash = bcrypt.hashSync(ADMIN_PASSWORD, 12);
+  db.prepare('INSERT INTO admins (username, password_hash) VALUES (?, ?)').run(ADMIN_USERNAME, hash);
+  console.log(`👤 Admin creado: ${ADMIN_USERNAME}`);
 }
 
 // ─── SEED RECURSOS INICIALES ─────────────────────────────────────────────────

@@ -18,3 +18,22 @@ export async function apiFetch(path, options = {}) {
 
   return res.json();
 }
+
+/**
+ * Envía un FormData (multipart) con el token JWT.
+ * No fija Content-Type para que el navegador ponga el boundary correcto.
+ */
+export async function apiUpload(path, formData, method = 'POST') {
+  const token = localStorage.getItem('admin_token');
+  const headers = {};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const res = await fetch(`${API_URL}${path}`, { method, headers, body: formData });
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || `Error ${res.status}`);
+  }
+
+  return res.json();
+}

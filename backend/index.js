@@ -3,6 +3,10 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
+if (!process.env.JWT_SECRET) {
+  throw new Error('Falta JWT_SECRET en el entorno. Define un secreto antes de arrancar el servidor.');
+}
+
 require('./db'); // Inicializar base de datos
 
 const app = express();
@@ -22,6 +26,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Rutas
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/resources', require('./routes/resources'));
+app.use('/api/posts', require('./routes/posts'));
 
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 

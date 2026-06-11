@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Plus, Pencil, Trash2, LogOut, RefreshCw, X } from 'lucide-react';
+import { Plus, Pencil, Trash2, LogOut, RefreshCw, X, FileText, Newspaper } from 'lucide-react';
 import { apiFetch } from '../api';
 import { getIcon } from '../icons';
 import AdminUploadForm from './AdminUploadForm';
+import AdminPosts from './AdminPosts';
 
 const CATEGORY_LABELS = {
   guides:      'Guías',
@@ -14,6 +15,7 @@ const CATEGORY_LABELS = {
 export default function AdminDashboard({ onLogout }) {
   const [resources, setResources] = useState([]);
   const [loading,   setLoading]   = useState(true);
+  const [section,   setSection]   = useState('resources');  // 'resources' | 'posts'
   const [view,      setView]      = useState('list');       // 'list' | 'form'
   const [editing,   setEditing]   = useState(null);        // null = nuevo, objeto = editar
   const [deleting,  setDeleting]  = useState(null);        // id del recurso a eliminar
@@ -103,8 +105,36 @@ export default function AdminDashboard({ onLogout }) {
 
       <div className="max-w-5xl mx-auto px-4 py-6">
 
+        {/* ── PESTAÑAS ── */}
+        <div className="flex items-center gap-2 mb-6">
+          <button
+            onClick={() => { setSection('resources'); setView('list'); }}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-mono transition-all ${
+              section === 'resources'
+                ? 'bg-[#d4af37] text-[#0a0a0a] font-semibold'
+                : 'bg-[#111111] text-gray-400 border border-[#1a1a1a] hover:text-white'
+            }`}
+          >
+            <FileText className="w-4 h-4" />
+            Recursos
+          </button>
+          <button
+            onClick={() => setSection('posts')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-mono transition-all ${
+              section === 'posts'
+                ? 'bg-[#d4af37] text-[#0a0a0a] font-semibold'
+                : 'bg-[#111111] text-gray-400 border border-[#1a1a1a] hover:text-white'
+            }`}
+          >
+            <Newspaper className="w-4 h-4" />
+            Publicaciones
+          </button>
+        </div>
+
+        {section === 'posts' && <AdminPosts />}
+
         {/* ── VISTA FORMULARIO ── */}
-        {view === 'form' && (
+        {section === 'resources' && view === 'form' && (
           <div>
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-white font-bold font-mono text-lg">
@@ -129,7 +159,7 @@ export default function AdminDashboard({ onLogout }) {
         )}
 
         {/* ── VISTA LISTA ── */}
-        {view === 'list' && (
+        {section === 'resources' && view === 'list' && (
           <div>
             {/* Header */}
             <div className="flex items-center justify-between mb-6">

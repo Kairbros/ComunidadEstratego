@@ -17,7 +17,12 @@ dist-ssr
 .env.local
 .env.production
 backend/.env
+
+# Datos del backend — nunca subir a git
+backend/data/
 backend/estratego.db
+backend/estratego.db-shm
+backend/estratego.db-wal
 backend/uploads/
 
 # Editor directories and files
