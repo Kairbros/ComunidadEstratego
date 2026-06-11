@@ -6,6 +6,7 @@ import PostsFeed     from './posts/PostsFeed';
 import PostDetail    from './posts/PostDetail';
 import AdminLogin    from './admin/AdminLogin';
 import AdminDashboard from './admin/AdminDashboard';
+import { LeadGateProvider } from './leadgate/LeadGateContext';
 
 function AdminRoute() {
   const [isLoggedIn, setIsLoggedIn] = useState(
@@ -22,6 +23,7 @@ function AdminRoute() {
 function App() {
   return (
     <BrowserRouter>
+      <LeadGateProvider>
       <Routes>
         <Route path="/"              element={<PostsFeed />} />
         <Route path="/documentos"    element={<CommunityPage />} />
@@ -31,6 +33,7 @@ function App() {
         <Route path="/publicaciones" element={<Navigate to="/" replace />} />
         <Route path="*"              element={<Navigate to="/" replace />} />
       </Routes>
+      </LeadGateProvider>
     </BrowserRouter>
   );
 }

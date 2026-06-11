@@ -13,5 +13,6 @@ contexto durante la refactorización.
 - [05 — Configuración y deploy](./05-config-deploy.md) — variables de entorno, Docker, nginx.
 - [06 — Observaciones y deuda técnica](./06-notes-tech-debt.md) — riesgos y puntos a tener en cuenta antes de cambiar.
 - [07 — Publicaciones (Posts)](./07-publicaciones.md) — feed social: galería de medios + adjuntos, gestionado por el admin.
+- [08 — Lead gate + GoHighLevel](./08-leadgate-ghl.md) — captura de nombre/correo/número antes de descargar; contacto en GHL con tag "comunidad".
 
 > Última revisión: 2026-06-10

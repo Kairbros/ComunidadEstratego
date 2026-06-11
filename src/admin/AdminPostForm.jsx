@@ -57,7 +57,8 @@ export default function AdminPostForm({ post, onSuccess, onCancel }) {
   }
 
   function addAttachments(files) {
-    setNewAttachments((prev) => [...prev, ...Array.from(files)]);
+    const picked = Array.from(files);   // copiar YA, antes de que se limpie el input
+    setNewAttachments((prev) => [...prev, ...picked]);
   }
 
   function removeExistingMedia(id) {

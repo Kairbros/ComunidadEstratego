@@ -3,6 +3,7 @@ import { Search, FileText, Download, Sparkles, BookOpen, Video, Wrench } from 'l
 import { API_URL } from './api';
 import { getIcon } from './icons';
 import SiteNav from './components/SiteNav';
+import { useLeadGate } from './leadgate/LeadGateContext';
 
 // ─── CONFIG ESTÁTICO ──────────────────────────────────────────────────────────
 const profile = {
@@ -88,13 +89,13 @@ function Badge({ text }) {
 
 function ResourceCard({ resource }) {
   const Icon = getIcon(resource.icon);
+  const { requestDownload } = useLeadGate();
 
   return (
-    <a
-      href={resource.download_url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="link-card block bg-[#111111] rounded-xl p-4 cursor-pointer h-full"
+    <button
+      type="button"
+      onClick={() => requestDownload(resource.download_url)}
+      className="link-card block w-full text-left bg-[#111111] rounded-xl p-4 cursor-pointer h-full"
     >
       <div className="flex flex-col h-full">
         <div className="flex items-center justify-between mb-2">
@@ -114,7 +115,7 @@ function ResourceCard({ resource }) {
           <span className="text-[#d4af37] text-[10px] font-mono">Descargar</span>
         </div>
       </div>
-    </a>
+    </button>
   );
 }
 
