@@ -70,6 +70,13 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_post_attachments_post ON post_attachments(post_id);
 `);
 
+// Migración: palabra clave en publicaciones (keyword para n8n)
+const postColumns = db.prepare('PRAGMA table_info(posts)').all();
+if (!postColumns.some((c) => c.name === 'badge')) {
+  db.exec(`ALTER TABLE posts ADD COLUMN badge TEXT NOT NULL DEFAULT ''`);
+  console.log('📌 Columna badge añadida a posts');
+}
+
 // ─── SEED ADMIN ───────────────────────────────────────────────────────────────
 // Credenciales tomadas del entorno. Solo se usan la primera vez (al sembrar).
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'EstrategoAdmin';

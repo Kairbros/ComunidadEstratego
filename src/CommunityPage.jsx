@@ -164,7 +164,10 @@ export default function CommunityPage() {
   useEffect(() => {
     fetch(`${API_URL}/api/resources`)
       .then((r) => r.json())
-      .then((data) => setResources(Array.isArray(data) ? data : []))
+      .then((data) => {
+        const filtered = Array.isArray(data) ? data.filter(item => item.category !== 'community' && item.category !== 'post') : [];
+        setResources(filtered);
+      })
       .catch(() => setResources([]))
       .finally(() => setLoadingRes(false));
   }, []);

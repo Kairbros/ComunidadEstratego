@@ -20,8 +20,25 @@ function baseUrl() {
   return process.env.BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
 }
 
+function frontendUrl() {
+  return process.env.FRONTEND_URL || 'http://localhost:5173';
+}
+
 function publicUrl(filename) {
   return `${baseUrl()}/uploads/posts/${filename}`;
+}
+
+function postPermalink(id) {
+  return `${frontendUrl()}/post/${id}`;
+}
+
+function formatPost(post) {
+  const { badge, ...rest } = post;
+  return {
+    ...rest,
+    palabra_clave: badge || '',
+    enlace: postPermalink(post.id),
+  };
 }
 
 // ─── Multer ───────────────────────────────────────────────────────────────────
@@ -91,7 +108,7 @@ function getFullPost(id) {
   post.attachments = db.prepare(
     'SELECT id, filename, original_name, url, size, mimetype FROM post_attachments WHERE post_id = ? ORDER BY id'
   ).all(id);
-  return post;
+  return formatPost(post);
 }
 
 function unlinkQuiet(filename) {
@@ -129,11 +146,12 @@ router.get('/', (req, res) => {
   const attStmt = db.prepare(
     'SELECT id, filename, original_name, url, size, mimetype FROM post_attachments WHERE post_id = ? ORDER BY id'
   );
-  for (const p of posts) {
+  const formatted = posts.map((p) => {
     p.media = mediaStmt.all(p.id);
     p.attachments = attStmt.all(p.id);
-  }
-  res.json(posts);
+    return formatPost(p);
+  });
+  res.json(formatted);
 });
 
 // ─── GET /api/posts/:id — público (permalink) ────────────────────────────────
@@ -149,6 +167,12 @@ router.post('/', auth, uploadFields, (req, res) => {
   const attachments = req.files?.attachments || [];
   const title = (req.body.title || '').trim();
   const description = (req.body.description || '').trim();
+  const badge = (req.body.badge || '').trim();
+
+  if (!badge) {
+    cleanupUploaded(req.files);
+    return res.status(400).json({ error: 'Falta el campo requerido: badge (palabra clave)' });
+  }
 
   if (!description && !title && media.length === 0) {
     cleanupUploaded(req.files);
@@ -157,8 +181,8 @@ router.post('/', auth, uploadFields, (req, res) => {
 
   const tx = db.transaction(() => {
     const { lastInsertRowid: postId } = db
-      .prepare('INSERT INTO posts (title, description) VALUES (?, ?)')
-      .run(title, description);
+      .prepare('INSERT INTO posts (title, description, badge) VALUES (?, ?, ?)')
+      .run(title, description, badge.toLowerCase());
 
     const insMedia = db.prepare(
       'INSERT INTO post_media (post_id, type, filename, url, position) VALUES (?, ?, ?, ?, ?)'
@@ -210,6 +234,7 @@ router.put('/:id', auth, uploadFields, (req, res) => {
 
   const title = req.body.title;
   const description = req.body.description;
+  const badge = req.body.badge;
   const filesToDelete = [];
 
   const tx = db.transaction(() => {
@@ -217,11 +242,13 @@ router.put('/:id', auth, uploadFields, (req, res) => {
       UPDATE posts SET
         title       = COALESCE(?, title),
         description = COALESCE(?, description),
+        badge       = COALESCE(?, badge),
         updated_at  = CURRENT_TIMESTAMP
       WHERE id = ?
     `).run(
       title !== undefined ? title.trim() : null,
       description !== undefined ? description.trim() : null,
+      badge !== undefined ? badge.toLowerCase().trim() : null,
       post.id
     );
 

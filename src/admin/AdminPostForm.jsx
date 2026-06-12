@@ -21,6 +21,7 @@ export default function AdminPostForm({ post, onSuccess, onCancel }) {
 
   const [title, setTitle]             = useState(post?.title || '');
   const [description, setDescription] = useState(post?.description || '');
+  const [badge, setBadge]             = useState(post?.palabra_clave || post?.badge || '');
 
   // Medios/adjuntos ya existentes (solo en edición)
   const [existingMedia, setExistingMedia]             = useState(post?.media || []);
@@ -80,6 +81,11 @@ export default function AdminPostForm({ post, onSuccess, onCancel }) {
     e.preventDefault();
     setError('');
 
+    if (!badge.trim()) {
+      setError('La palabra clave es obligatoria');
+      return;
+    }
+
     if (!title.trim() && !description.trim() && mediaCount === 0) {
       setError('Escribe algo o agrega al menos un medio');
       return;
@@ -90,6 +96,7 @@ export default function AdminPostForm({ post, onSuccess, onCancel }) {
       const fd = new FormData();
       fd.append('title', title.trim());
       fd.append('description', description.trim());
+      fd.append('badge', badge.trim());
       newMedia.forEach((f) => fd.append('media', f));
       newAttachments.forEach((f) => fd.append('attachments', f));
       if (isEditing) {
@@ -119,6 +126,24 @@ export default function AdminPostForm({ post, onSuccess, onCancel }) {
           placeholder="Título de la publicación"
           className="w-full bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg py-2.5 px-3 text-white text-sm font-mono focus:outline-none focus:border-[#d4af37]/50 transition-colors placeholder-gray-600"
         />
+      </div>
+
+      {/* Palabra clave */}
+      <div>
+        <label className="text-gray-400 text-xs font-mono block mb-1">
+          Palabra clave / Badge <span className="text-red-400">*</span>
+        </label>
+        <input
+          type="text"
+          value={badge}
+          onChange={(e) => setBadge(e.target.value)}
+          required
+          placeholder="ej. novedad"
+          className="w-full bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg py-2.5 px-3 text-white text-sm font-mono focus:outline-none focus:border-[#d4af37]/50 transition-colors placeholder-gray-600"
+        />
+        <p className="text-gray-600 text-[10px] font-mono mt-1">
+          Se guarda en minúsculas — usada como keyword en n8n para enviar el enlace
+        </p>
       </div>
 
       {/* Descripción */}

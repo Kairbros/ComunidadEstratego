@@ -56,6 +56,44 @@ router.get('/', (req, res) => {
     FROM resources
     ORDER BY created_at DESC
   `).all();
+
+  // Comunidad link y palabra clave
+  const communityKw = (process.env.COMUNIDAD_PALABRA_CLAVE || 'comunidad').toLowerCase().trim();
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+  if (communityKw) {
+    resources.push({
+      id: null,
+      title: 'Comunidad Estratego',
+      description: 'Enlace a la comunidad principal',
+      category: 'community',
+      palabra_clave: communityKw,
+      icon: 'Users',
+      filename: '',
+      download_url: frontendUrl,
+    });
+  }
+
+  // Publicaciones con palabra clave
+  const posts = db.prepare(`
+    SELECT id, title, description, badge AS palabra_clave
+    FROM posts
+    WHERE badge != ''
+    ORDER BY created_at DESC
+  `).all();
+
+  for (const p of posts) {
+    resources.push({
+      id: p.id,
+      title: p.title || p.description?.slice(0, 80) || `Publicación #${p.id}`,
+      description: p.description || '',
+      category: 'post',
+      palabra_clave: p.palabra_clave,
+      icon: 'Newspaper',
+      filename: '',
+      download_url: `${frontendUrl}/post/${p.id}`,
+    });
+  }
+
   res.json(resources);
 });
 

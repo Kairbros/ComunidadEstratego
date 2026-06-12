@@ -27,6 +27,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/resources', require('./routes/resources'));
 app.use('/api/posts', require('./routes/posts'));
+app.use('/api/links', require('./routes/links'));
 app.use('/api/leads', require('./routes/leads'));
 
 app.get('/health', (req, res) => res.json({ status: 'ok' }));

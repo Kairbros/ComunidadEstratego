@@ -28,7 +28,8 @@ export default function AdminDashboard({ onLogout }) {
     setError('');
     try {
       const data = await apiFetch('/api/resources');
-      setResources(data);
+      const filtered = Array.isArray(data) ? data.filter(item => item.category !== 'community' && item.category !== 'post') : [];
+      setResources(filtered);
     } catch (err) {
       setError(err.message);
     } finally {

@@ -124,7 +124,12 @@ export default function AdminPosts() {
                 <p className="text-white text-sm font-mono font-semibold truncate">
                   {post.title || post.description?.slice(0, 60) || '(sin texto)'}
                 </p>
-                <div className="flex items-center gap-3 mt-1 text-gray-600 text-[10px] font-mono">
+                <div className="flex items-center gap-3 mt-1 text-gray-600 text-[10px] font-mono flex-wrap">
+                  {post.palabra_clave && (
+                    <span className="bg-[#d4af37] text-[#0a0a0a] text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">
+                      {post.palabra_clave}
+                    </span>
+                  )}
                   <span>{timeAgo(post.created_at)}</span>
                   {post.media?.length > 0 && (
                     <span className="flex items-center gap-1"><ImageIcon className="w-3 h-3" />{post.media.length}</span>
